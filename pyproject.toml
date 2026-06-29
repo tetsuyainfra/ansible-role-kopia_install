@@ -1,0 +1,14 @@
+[project]
+name = "tetsuyainfra-kopia_install"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "ansible<14.0.0",
+    "ansible-lint>=26.4.0",
+    "argcomplete>=3.6.3",
+    "bcrypt<5",
+    "molecule>=26.4.0",
+    "passlib>=1.7.4",
+]

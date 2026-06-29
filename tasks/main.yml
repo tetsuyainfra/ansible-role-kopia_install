@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: MIT
+---
+# tasks file for tetsuyainfra.kopia_install
+
+- name: KopiaInstall | Get GPG key
+  ansible.builtin.get_url:
+    url: https://packages.kopia.io/kopia-repo.gpg
+    dest: /etc/apt/trusted.gpg.d/kopia-repo.gpg
+    checksum: sha256:e01adf3b905ef41a1c0b81f28a41fd7daa6a6918c97506a726b0f896aa93555a
+    owner: root
+    group: root
+    mode: '0644'

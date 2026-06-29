@@ -1,0 +1,31 @@
+[tools]
+prek = "latest"
+uv = "latest"
+
+[settings]
+python.uv_venv_auto = "create|source"
+
+[tasks.install]
+description = "Install project dependencies"
+alias = "i"
+run = """
+    uv sync
+"""
+
+[hooks.enter]
+shell = "bash"
+script = [
+    "eval \"$(register-python-argcomplete ansible-playbook)\"",
+    "eval \"$(register-python-argcomplete ansible-vault)\"",
+    "eval \"$(register-python-argcomplete ansible-lint)\"",
+    "eval \"$(_MOLECULE_COMPLETE=bash_source molecule)\""
+]
+
+[hooks.leave]
+shell = "bash"
+script = [
+    "complete -r ansible-playbook",
+    "complete -r ansible-vault",
+    "complete -r ansible-lint",
+    "complete -r molecule"
+]
