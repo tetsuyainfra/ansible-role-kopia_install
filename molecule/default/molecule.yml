@@ -12,7 +12,7 @@ provisioner:
   name: ansible
   inventory:
     links:
-      hosts: ../../tests/inventory/
+      hosts: ../../tests/inventory/hosts.yml
 
 ansible:
   cfg:
