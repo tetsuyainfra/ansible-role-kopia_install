@@ -1,0 +1,42 @@
+---
+- name: KopiaInstall | RedHat | Get GPG key
+  when: kopia_install and not kopia_uninstall
+  become: "{{ kopia_install___become }}"
+  ansible.builtin.rpm_key:
+    key: "{{ kopia_install__signed_key_url }}"
+    fingerprint: "{{ kopia_install__signed_key_fingerprint }}"
+
+
+- name: KopiaInstall | RedHat | Configure YUM repository
+  when: kopia_install and not kopia_uninstall
+  become: "{{ kopia_install___become }}"
+  ansible.builtin.yum_repository:
+    name: kopia
+    description: Kopia Repository
+    baseurl: "{{ kopia_install__rpm_baseurl }}"
+    gpgcheck: true
+    enabled: true
+    gpgkey: "{{ kopia_install__signed_key_url }}"
+    state: present
+
+- name: KopiaInstall | RedHat | Install Package
+  when: kopia_install and not kopia_uninstall
+  become: "{{ kopia_install___become }}"
+  ansible.builtin.dnf:
+    name: kopia
+    update_cache: true
+    state: present
+
+- name: KopiaInstall | RedHat | Configure YUM repository
+  when: kopia_uninstall and not kopia_install
+  become: "{{ kopia_install___become }}"
+  ansible.builtin.yum_repository:
+    name: kopia
+    state: absent
+
+- name: KopiaInstall | RedHat | Uninstall GPG key
+  when: kopia_uninstall and not kopia_install
+  become: "{{ kopia_install___become }}"
+  ansible.builtin.rpm_key:
+    key: "{{ kopia_install__signed_key_url }}"
+    state: absent

@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: MIT
+---
+# defaults file for tetsuyainfra.kopia_install
+
+kopia_install: false
+kopia_uninstall: false
+
+kopia_install___become: "{{ ansible_connection not in ['containers.podman.podman', 'docker', 'community.docker.docker'] }}"
+
+kopia_install__signed_key_url: "{{ __kopia_signed_key_url }}"
+kopia_install__signed_key_checksum: "{{ __kopia_signed_key_checksum }}"
+kopia_install__signed_key_fingerprint: "{{ __kopia_signed_key_fingerprint }}"
+
+kopia_install__apt_uris: "{{ __kopia_apt_uris }}"
+kopia_install__apt_suites: "{{ __kopia_apt_suites }}"
+kopia_install__apt_components: "{{ __kopia_apt_components }}"
+kopia_install__apt_signed_by_path: "{{ __kopia_apt_signed_by_path }}"
+
+kopia_install__rpm_baseurl: "{{ __kopia_rpm_baseurl }}"

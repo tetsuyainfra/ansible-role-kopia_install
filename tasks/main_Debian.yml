@@ -1,0 +1,46 @@
+---
+- name: KopiaInstall | Debian | Get GPG key For Debian
+  when: kopia_install and not kopia_uninstall
+  become: "{{ kopia_install___become }}"
+  ansible.builtin.get_url:
+    url: "{{ kopia_install__signed_key_url }}"
+    dest: "{{ kopia_install__apt_signed_by_path }}"
+    checksum: "{{ kopia_install__signed_key_checksum }}"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: KopiaInstall | Debian | Configure APT repository
+  when: kopia_install and not kopia_uninstall
+  become: "{{ kopia_install___become }}"
+  ansible.builtin.deb822_repository:
+    name: kopia
+    types: deb
+    uris: "{{ kopia_install__apt_uris }}"
+    suites: "{{ kopia_install__apt_suites }}"
+    components: "{{ kopia_install__apt_components }}"
+    signed_by: "{{ kopia_install__apt_signed_by_path }}"
+    state: present
+
+- name: KopiaInstall | Debian | Install Package
+  when: kopia_install and not kopia_uninstall
+  become: "{{ kopia_install___become }}"
+  ansible.builtin.apt:
+    name: kopia
+    update_cache: true
+    cache_valid_time: 3600
+    state: present
+
+- name: KopiaInstall | Debian | Purge APT repository
+  when: kopia_uninstall and not kopia_install
+  become: "{{ kopia_install___become }}"
+  ansible.builtin.deb822_repository:
+    name: kopia
+    state: absent
+
+- name: KopiaInstall | Debian | Uninstall GPG key
+  when: kopia_uninstall and not kopia_install
+  become: "{{ kopia_install___become }}"
+  ansible.builtin.file:
+    path: "{{ kopia_install__apt_signed_by_path }}"
+    state: absent

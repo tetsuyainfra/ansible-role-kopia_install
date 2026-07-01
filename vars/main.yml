@@ -1,3 +1,21 @@
 # SPDX-License-Identifier: MIT
 ---
 # vars file for tetsuyainfra.kopia_install
+
+__kopia_signed_key_url: "https://kopia.io/signing-key"
+
+# Command: curl -sSL https://kopia.io/signing-key | sha256sum
+# Checked: (2026-07-01)
+__kopia_signed_key_checksum: sha256:e01adf3b905ef41a1c0b81f28a41fd7daa6a6918c97506a726b0f896aa93555a
+
+# Command: curl -sSL https://kopia.io/signing-key | gpg --show-keys --with-fingerprint
+# Checked: (2026-07-01)
+__kopia_signed_key_fingerprint: "7FB9 9DFD 4780 9F0D 5339  D7D9 2273 699A FD56 A556"
+
+
+__kopia_apt_uris: "https://packages.kopia.io/apt/"
+__kopia_apt_suites: "stable"
+__kopia_apt_components: "main"
+__kopia_apt_signed_by_path: "/etc/apt/trusted.gpg.d/kopia-repo.gpg"
+
+__kopia_rpm_baseurl: "http://packages.kopia.io/rpm/stable/$basearch/"
