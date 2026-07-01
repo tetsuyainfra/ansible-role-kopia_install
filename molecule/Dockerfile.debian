@@ -1,0 +1,34 @@
+ARG BASE_IMAGE=debian:13
+
+FROM $BASE_IMAGE
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# SEE: https://github.com/ansible-community/molecule-plugins/blob/main/src/molecule_plugins/podman/playbooks/Dockerfile.j2
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       # molecule & ansible need packages
+       python3 sudo bash ca-certificates iproute2 python3-apt python3-debian aptitude \
+       # install systemd
+       systemd systemd-sysv \
+       # i need this
+       bash-completion \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -Rf /usr/share/doc && rm -Rf /usr/share/man \
+    && apt-get clean \
+    && rm -rf /tmp/* /var/tmp/* ; \
+    # systemctl --failed で起動に失敗するサービスを削除してしまう
+    rm -rf /lib/systemd/system/multi-user.target.wants/* ; \
+    rm -rf /etc/systemd/system/*.wants/* ; \
+    rm -rf /lib/systemd/system/local-fs.target.wants/* ; \
+    rm -rf /lib/systemd/system/sockets.target.wants/*udev* ; \
+    rm -rf /lib/systemd/system/sockets.target.wants/*initctl* ; \
+    rm -rf /lib/systemd/system/sysinit.target.wants/systemd-tmpfiles-setup* ; \
+    rm -rf /lib/systemd/system/systemd-update-utmp* ; \
+    rm -rf /usr/lib/systemd/system/sysinit.target.wants/proc-sys-fs-binfmt_misc.automount ; \
+    rm -rf /usr/lib/systemd/system/sysinit.target.wants/sys-kernel-config.mount ; \
+    rm -rf /usr/lib/systemd/system/sysinit.target.wants/sys-kernel-debug.mount ; \
+    rm -rf /usr/lib/systemd/system/sysinit.target.wants/sys-kernel-tracing.mount ; \
+    rm -rf /usr/lib/systemd/system/sysinit.target.wants/systemd-modules-load.service
+
+CMD ["/lib/systemd/systemd"]

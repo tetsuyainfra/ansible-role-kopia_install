@@ -1,0 +1,19 @@
+---
+# Purpose: bring the instance to the desired state by running the role under test.
+# Molecule calls this playbook with `molecule converge`.
+- name: Converge | Install
+  ansible.builtin.import_playbook: "../../tests/install.yml"
+
+# - name: Converge | Install Check
+#   hosts: all
+#   connection: containers.podman.podman
+#   gather_facts: true # Disable if your role does not rely on facts
+#   tasks:
+#     - name: Converge | Install Check | Check if kopia is installed
+#       ansible.builtin.command: "kopia --version"
+#       register: kopia_version
+#       changed_when: false
+#       failed_when: kopia_version.rc != 0
+
+# - name: Converge | UnInstall
+#   ansible.builtin.import_playbook: "../../tests/uninstall.yml"

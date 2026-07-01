@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: MIT
+---
+- name: Test
+  hosts: all
+  remote_user: root
+  vars:
+    kopia_install: false
+    kopia_uninstall: true
+  roles:
+    - tetsuyainfra.kopia_install

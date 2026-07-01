@@ -1,0 +1,19 @@
+---
+- name: Destroy
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  # no_log: "{{ molecule_no_log }}"
+  tasks:
+    - name: Destroy | Remove test containers
+      containers.podman.podman_container:
+        name: "{{ item }}"
+        state: absent
+      loop: "{{ groups['all'] }}"
+      failed_when: false
+
+    - name: Destroy | Remove container network
+      containers.podman.podman_network:
+        name: molecule-linux-test
+        state: absent
+      failed_when: false

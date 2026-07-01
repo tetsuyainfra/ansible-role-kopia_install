@@ -1,0 +1,45 @@
+---
+- name: Create
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  # no_log: "{{ molecule_no_log }}"
+  tasks:
+    - name: Create | Image | Build Debian podman image
+      containers.podman.podman_image:
+        name: "test-debian13"
+        path: "{{ playbook_dir }}/../"
+        build:
+          file: "Dockerfile.debian"
+          extra_args: >-
+            --build-arg BASE_IMAGE=debian:13
+
+    - name: Create | Image | Build Fedora podman image
+      containers.podman.podman_image:
+        name: "{{ item.name }}"
+        path: "{{ playbook_dir }}/../"
+        build:
+          file: "Dockerfile.fedora"
+          extra_args: >-
+            --build-arg BASE_IMAGE={{ item.base_image }}
+            --build-arg MIRROR_CHANGE=true
+      loop:
+        - name: "test-fedora43"
+          base_image: "quay.io/fedora/fedora:43"
+        - name: "test-fedora44"
+          base_image: "quay.io/fedora/fedora:44"
+
+    - name: Create | Create container network
+      containers.podman.podman_network:
+        name: molecule-linux-test
+        state: present
+
+    - name: Create | Create test containers
+      containers.podman.podman_container:
+        name: "{{ item }}"
+        image: "{{ hostvars[item].image_name }}"
+        command: "/lib/systemd/systemd"
+        systemd: true
+        state: started
+        network: molecule-linux-test
+      loop: "{{ groups['all'] }}"

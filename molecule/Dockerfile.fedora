@@ -1,0 +1,34 @@
+ARG BASE_IMAGE=fedora:44
+
+FROM $BASE_IMAGE
+
+ARG MIRROR_CHANGE=false
+ARG MIRROR_REPLACE=http://download.example/pub/fedora/linux
+ARG MIRROR_URL=http://ftp.riken.jp/Linux/fedora
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN if [ "$MIRROR_CHANGE" = "true" ]; then \
+        sed -i \
+            -e 's|^metalink=|#metalink=|g' \
+            -e "s|^#baseurl=${MIRROR_REPLACE}|baseurl=${MIRROR_URL}|g" \
+            /etc/yum.repos.d/fedora.repo /etc/yum.repos.d/fedora-updates.repo ; \
+    fi ; \
+    #
+    dnf -y install python3-pip python3-dnf systemd \
+    && dnf clean all ; \
+    # SEE: https://github.com/ansible-community/molecule-plugins/blob/main/src/molecule_plugins/podman/playbooks/Dockerfile.j2
+    # systemctl --failed で起動に失敗するサービスを削除してしまう
+    rm -rf /lib/systemd/system/multi-user.target.wants/* ; \
+    rm -rf /etc/systemd/system/*.wants/* ; \
+    rm -rf /lib/systemd/system/local-fs.target.wants/* ; \
+    rm -rf /lib/systemd/system/sockets.target.wants/*udev* ; \
+    rm -rf /lib/systemd/system/sockets.target.wants/*initctl* ; \
+    rm -rf /lib/systemd/system/sysinit.target.wants/systemd-tmpfiles-setup* ; \
+    rm -rf /lib/systemd/system/systemd-update-utmp* ; \
+    rm -rf /usr/lib/systemd/system/sysinit.target.wants/proc-sys-fs-binfmt_misc.automount ; \
+    rm -rf /usr/lib/systemd/system/sysinit.target.wants/sys-kernel-config.mount ; \
+    rm -rf /usr/lib/systemd/system/sysinit.target.wants/sys-kernel-debug.mount ; \
+    rm -rf /usr/lib/systemd/system/sysinit.target.wants/sys-kernel-tracing.mount ; \
+    rm -rf /usr/lib/systemd/system/sysinit.target.wants/systemd-modules-load.service
+
+CMD ["/lib/systemd/systemd"]
