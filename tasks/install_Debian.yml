@@ -28,7 +28,6 @@
   ansible.builtin.apt:
     name: kopia
     update_cache: true
-    cache_valid_time: 3600
     state: present
 
 - name: KopiaInstall | Debian | Purge APT repository
